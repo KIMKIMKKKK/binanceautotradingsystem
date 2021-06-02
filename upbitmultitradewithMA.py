@@ -75,6 +75,7 @@ while True:
             buy("KRW-VET", 0.5)
             buy("KRW-ATOM", 0.5)
             buy("KRW-ICX", 0.5)
+            buy("KRW-BTT", 0.5)
         else:
             print("종가 판매 중")
             sell("BTC", "KRW-BTC")
@@ -93,6 +94,7 @@ while True:
             sell("VET", "KRW-VET")
             sell("ATOM", "KRW-ATOM")
             sell("ICX", "KRW-ICX")
+            sell("BTT", "KRW-BTT")
     except Exception as e:
         print(e)
         time.sleep(1)          
