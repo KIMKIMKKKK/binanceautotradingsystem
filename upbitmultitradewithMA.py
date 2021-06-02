@@ -6,19 +6,16 @@ access = ""
 secret = ""
 
 def get_target_price(ticker, k):
-    """변동성 돌파 전략으로 매수 목표가 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="day", count=2)
     target_price = df.iloc[0]['close'] + (df.iloc[0]['high'] - df.iloc[0]['low']) * k
     return target_price
 
 def get_start_time(ticker):
-    """시작 시간 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="day", count=1)
     start_time = df.index[0]
     return start_time
 
 def get_balance(ticker):
-    """잔고 조회"""
     balances = upbit.get_balances()
     for b in balances:
         if b['currency'] == ticker:
@@ -29,7 +26,6 @@ def get_balance(ticker):
     return 0
 
 def get_current_price(ticker):
-    """현재가 조회"""
     return pyupbit.get_orderbook(tickers=ticker)[0]["orderbook_units"][0]["ask_price"]
 
 now = datetime.datetime.now()
@@ -37,63 +33,66 @@ start_time = get_start_time("KRW-ETH")
 end_time = start_time + datetime.timedelta(days=1)
 
 def get_ma15(ticker):
-    """15일 이동 평균선 조회"""
     df = pyupbit.get_ohlcv(ticker, interval="day", count=15)
     ma15 = df['close'].rolling(15).mean().iloc[-1]
     return ma15
 
-def autotrading(coin, k):
-    if start_time < now < end_time - datetime.timedelta(seconds=10):
+def buy(coin, k):
+    if start_time < now < end_time - datetime.timedelta(seconds=15):
         target_price = get_target_price(coin, k)
         ma15 = get_ma15(coin)
         current_price = get_current_price(coin)
         if target_price < current_price and ma15 < current_price:
             krw = get_balance("KRW")
             if krw > 5000:
-                upbit.buy_market_order(coin, krw*0.5)
+                upbit.buy_market_order(coin, krw*0.35)
 
-# 목표가 < 현재가 and 이동 평균 < 현재가
-
-def autoselling(sellcoin, krwsellco):
-    btc = get_balance(sellcoin)
+def sell(coin, KRW):
+    btc = get_balance(coin)
     if btc > 0.00008:
-        upbit.sell_market_order(krwsellco, btc*0.9995)
+        upbit.sell_market_order(KRW, btc*0.9995)
         time.sleep(1)
 
-# 로그인
 upbit = pyupbit.Upbit(access, secret)
-print("autotrade start")
-print(get_target_price("KRW-BTC", 0.5))
-print(get_target_price("KRW-ETH", 0.5))
-print(get_target_price("KRW-ADA", 0.5))
-print(get_target_price("KRW-XRP", 0.5))
-print(get_target_price("KRW-DOT", 0.5))
-print(get_target_price("KRW-LINK", 0.5))
-print(get_target_price("KRW-BCH", 0.5))
-print(get_target_price("KRW-LTC", 0.5))
-print(get_target_price("KRW-DOGE", 0.5))
 
-# 자동매매 시작
 while True:
     try:
-        if start_time < now < end_time - datetime.timedelta(seconds=10):
-            autotrading("KRW-BTC", 0.5)
-            autotrading("KRW-ETH", 0.5)
-            autotrading("KRW-ADA", 0.5)
-            autotrading("KRW-XRP", 0.5)
-            autotrading("KRW-DOT", 0.5)
-            autotrading("KRW-LINK", 0.5)
-            autotrading("KRW-BCH", 0.5)
-            autotrading("KRW-LTC", 0.5)
+        if start_time < now < end_time - datetime.timedelta(seconds=15):
+            print("목표가 탐색 중")
+            buy("KRW-BTC", 0.5)
+            buy("KRW-ETH", 0.5)
+            buy("KRW-ADA", 0.5)
+            buy("KRW-XRP", 0.5)
+            buy("KRW-DOT", 0.5)
+            buy("KRW-LINK", 0.5)
+            buy("KRW-BCH", 0.5)
+            buy("KRW-LTC", 0.5)
+            buy("KRW-TRX", 0.5)
+            buy("KRW-PCI", 0.5)
+            buy("KRW-HUNT", 0.5)
+            buy("KRW-STRK", 0.5)
+            buy("KRW-XLM", 0.5)
+            buy("KRW-VET", 0.5)
+            buy("KRW-ATOM", 0.5)
+            buy("KRW-ICX", 0.5)
         else:
-            autoselling("BTC", "KRW-BTC")
-            autoselling("ETH", "KRW-ETH")
-            autoselling("ADA", "KRW-ADA")
-            autoselling("XRP", "KRW-XRP")
-            autoselling("DOT", "KRW-DOT")
-            autoselling("LINK", "KRW-LINK")
-            autoselling("BCH", "KRW-BCH")
-            autoselling("LTC", "KRW-LTC")
+            print("종가 판매 중")
+            sell("BTC", "KRW-BTC")
+            sell("ETH", "KRW-ETH")
+            sell("ADA", "KRW-ADA")
+            sell("XRP", "KRW-XRP")
+            sell("DOT", "KRW-DOT")
+            sell("LINK", "KRW-LINK")
+            sell("BCH", "KRW-BCH")
+            sell("LTC", "KRW-LTC")
+            sell("TRX", "KRW-TRX")
+            sell("PCI", "KRW-PCI")
+            sell("HUNT", "KRW-HUNT")
+            sell("STRK", "KRW-STRK")
+            sell("XLM", "KRW-XLM")
+            sell("VET", "KRW-VET")
+            sell("ATOM", "KRW-ATOM")
+            sell("ICX", "KRW-ICX")
     except Exception as e:
         print(e)
         time.sleep(1)          
