@@ -47,7 +47,7 @@ def autotrading(coin, k):
         target_price = get_target_price(coin, k)
         ma15 = get_ma15(coin)
         current_price = get_current_price(coin)
-        if target_price < current_price and current_price < ma15:
+        if target_price < current_price and ma15 < current_price:
             krw = get_balance("KRW")
             if krw > 5000:
                 upbit.buy_market_order(coin, krw*0.5)
