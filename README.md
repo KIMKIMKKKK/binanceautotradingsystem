@@ -1,2 +1,2 @@
-# binanceautotradingsystem
+# binanceautotrading
 only use for me
